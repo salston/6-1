@@ -45,6 +45,11 @@ class Tally:
     s = sorted(self.tallies, key=self.tallies.__getitem__)
     return s[0]
 
+  def rank(self, n):
+    # get a list of tallies keys reverse ordered by value
+    s = sorted(self.tallies, key=self.tallies.__getitem__, reverse=True)
+    return s.index(n) + 1
+
 
 #
 # FUNCTIONS ----------------------------------
@@ -141,7 +146,6 @@ def mostPickedTrail(winners):
 #
 
 def trials(winners, method, n=1):
-  random.seed()
 
   rTotals = Results()
 
@@ -156,26 +160,41 @@ def trials(winners, method, n=1):
   print(method.__name__, '- Trails:', n, '- Average:', rSum / n)  
 
 #
-# Converted to here
+# Ranks
 #
 
+def ranks(winners):
+  # train algorythm with first 5000
+  #     count up # times each number is picked
+  t = Tally()
+  for n in winners[:4999]:
+    t.add(n)
+
+  # Rank rest of numbers
+  rs = []
+  for w in winners[5000:]:
+    rs.append(t.rank(w))
+    t.add(w)
+  a = sum(rs) / len(rs)
+  return a
+  
 
 #
 # MAIN ------------------------------------------
 #
 
 def main():
+  random.seed()
+  
   winners = readData('data.csv')
-
-  #r = randomTrial(winners)
-  #r.pr()
 
   trials(winners, randomTrial, 10)
 
   trials(winners, leastPickedTrail)
 
   trials(winners, mostPickedTrail)
-        
+
+  print('average rank:', ranks(winners))
 
 
 if __name__ == "__main__":
