@@ -113,6 +113,30 @@ def leastPickedTrail(winners):
   return r
 
 #
+# Most
+#
+
+def mostPickedTrail(winners):
+  # train algorythm with first 5000
+  #     count up # times each number is picked
+  t = Tally()
+  for n in winners[:4999]:
+    t.add(n)
+
+  # Picks
+  r = Results()
+  for w in winners[5000:]:
+    p = t.most()
+    if (p == w):
+      r.addCorrect()
+    else:
+      r.addWrong()
+    # update tallies
+    t.add(w) 
+  return r
+
+
+#
 # Trials
 #
 
@@ -135,32 +159,6 @@ def trials(winners, method, n=1):
 # Converted to here
 #
 
-#
-# Most
-#
-
-def mostPickedTrail(winners):
-  # train algorythm with first 2000
-  #     count up # times each number is picked
-  tallies = {x: 0 for x in range(1, 50)}
-  for w in winners[:1999]:
-    for n in w.numbers:
-      tallies[n] = tallies[n] +1
-    tallies[w.bonus] = tallies[w.bonus] +1 
-
-  # Picks
-  r = Results()
-  for w in winners[2000:]:
-    p = mostPickedDraw(tallies)
-    win = winnings(p, w.numbers, w.bonus)
-    r.add(win)
-    # update tallies 
-    for n in w.numbers:
-      tallies[n] = tallies[n] +1
-    tallies[w.bonus] = tallies[w.bonus] +1 
-  return r
-
-
 
 #
 # MAIN ------------------------------------------
@@ -176,7 +174,7 @@ def main():
 
   trials(winners, leastPickedTrail)
 
-  #trials(winners, mostPickedTrail)
+  trials(winners, mostPickedTrail)
         
 
 
